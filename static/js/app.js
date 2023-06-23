@@ -49,8 +49,8 @@ function createChart(data, sample) {
   }];
   var barLayout = {
       title: `Subject ID: ${sample} Top 10 OTUs`,
-      height: 600,
-      width: 1200
+      height: 500,
+      width: 500
   };
   Plotly.newPlot("bar", barData, barLayout);
 
@@ -67,11 +67,12 @@ function createChart(data, sample) {
   }];
   var bubbleLayout = {
     xaxis: {title: "OTU ID"},
-    height: 600,
-    width: 1500
+    height: 500,
+    width: 800
   };
   Plotly.newPlot("bubble", bubbleData, bubbleLayout);
 //Guage Chart
+  let GAUGE = document.getElementById("gauge");
   var gaugedata = [
   {
     domain: { x: [0, 1], y: [0, 1] },
@@ -104,10 +105,10 @@ function createChart(data, sample) {
 ];
 
 var gaugelayout = { 
-  width: 600, 
-  height: 300,
+  width: 500, 
+  height: 350,
   margin: { t: 0, b: 0 } };
-Plotly.newPlot('gauge', gaugedata, gaugelayout);
+Plotly.newPlot(GAUGE, gaugedata, gaugelayout);
 }
 
 function optionChanged(sample) {
