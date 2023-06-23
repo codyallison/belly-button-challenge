@@ -8,26 +8,24 @@ function init() {
         selector.append("option").text(sample).property("value", sample);
     });
     var initsample = names[0];
-    getMetadata(data, initsample);
-    getChart(data, initsample);
+    createMetadata(data, initsample);
+    createChart(data, initsample);
   });
   }
   
   init();
 
-function getMetadata(data, sample) {
-  var metadata = data.metadata;
-  var metadataArray = metadata.filter(sampleObj => sampleObj.id == sample);
+function createMetadata(data, sample) {
+  var metadataArray = data.metadata.filter(sampleObj => sampleObj.id == sample);
   var selectedSample = metadataArray[0];
-  var PANEL = d3.select("#sample-metadata");
-  // Clear PANEL before populating with new data
-  PANEL.html("");
+  var metaPanel = d3.select("#sample-metadata");
+  metaPanel.html("");
   Object.entries(selectedSample).forEach(([key, value]) => {
-      PANEL.append("h4").text(`${key}: ${value}`);
+    metaPanel.append("h4").text(`${key}: ${value}`);
   });
 }
 
-function getChart(data, sample) {
+function createChart(data, sample) {
   var samples = data.samples;
   var sampleArray = samples.filter(sampleObj => sampleObj.id == sample);
   var selectedSample = sampleArray[0];
@@ -36,12 +34,13 @@ function getChart(data, sample) {
   var sample_values = selectedSample.sample_values;
 
   var metadataArray = data.metadata.filter(sampleObj => sampleObj.id == sample);
-  var wfreq = metadataArray[0].wfreq;
+  var wfreq = parseFloat(metadataArray[0].wfreq);
+  console.log(wfreq);
   
   // Bar chart
   // Create y labels with "OTU" preceding otu_id ie. OTU 1167
   var yticks = otu_ids.slice(0,10).map(otuId => `OTU ${otuId}`).reverse();
-  var Data = [{
+  var barData = [{
       x: sample_values.slice(0,10).reverse(),
       y: yticks,
       type: "bar",
@@ -53,32 +52,69 @@ function getChart(data, sample) {
       height: 600,
       width: 1200
   };
-  Plotly.newPlot("bar", Data, barLayout);
+  Plotly.newPlot("bar", barData, barLayout);
+
 //Bubble chart
-var bubbleData = [{
-  x: otu_ids,
-  y: sample_values,
-  mode: "markers",
-  marker: {
+  var bubbleData = [{
+    x: otu_ids,
+    y: sample_values,
+    mode: "markers",
+    marker: {
       size: sample_values,
       color: otu_ids
-  },
-  text: otu_labels
-}];
-var bubbleLayout = {
-  xaxis: {title: "OTU ID"},
-  height: 600,
-  width: 1500
-};
-Plotly.newPlot("bubble", bubbleData, bubbleLayout);
-// -------- BUBBLE CHART -------------------------------------
+    },
+    text: otu_labels
+  }];
+  var bubbleLayout = {
+    xaxis: {title: "OTU ID"},
+    height: 600,
+    width: 1500
+  };
+  Plotly.newPlot("bubble", bubbleData, bubbleLayout);
+//Guage Chart
+  var gaugedata = [
+  {
+    domain: { x: [0, 1], y: [0, 1] },
+    value: wfreq,
+    title: { text: "Belly Button Washing Frequency" },
+    type: "indicator",
+    mode: "gauge+number",
+    gauge: {
+      axis: { 
+        range: [null, 10],
+        visible: true,
+        tickmode:"array",
+        tickwidth:2,
+        tickvals: ["0-1", "1-2","2-3","3-4","4-5","5-6","6-7","7-8","8-9","9-10"],
+        ticks:"inside"},
+      steps: [
+        { range: [0, 1], color: "#009a60" },
+        { range: [1, 2], color: "#4aa84e" },
+        { range: [2, 3], color: "#92b73a" },
+        { range: [3, 4], color: "#c6bf22" },
+        { range: [4, 5], color: "#edbd02" },
+        { range: [5, 6], color: "#ffad00" },
+        { range: [6, 7], color: "#ff8c00" },
+        { range: [7, 8], color: "#fc6114" },
+        { range: [8, 9], color: "#f43021" },
+        { range: [9, 10], color: "#ed0022" }
+      ]
+    }
+  }
+];
+
+var gaugelayout = { 
+  width: 600, 
+  height: 300,
+  margin: { t: 0, b: 0 } };
+Plotly.newPlot('gauge', gaugedata, gaugelayout);
 }
 
 function optionChanged(sample) {
 const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 d3.json(url).then(data => {
-  getMetadata(data, sample);
-  getChart(data, sample);
+  createMetadata(data, sample);
+  createChart(data, sample);
 });
 }
 
