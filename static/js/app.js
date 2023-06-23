@@ -77,7 +77,7 @@ function createChart(data, sample) {
   {
     domain: { x: [0, 1], y: [0, 1] },
     value: wfreq,
-    title: { text: "Belly Button Washing Frequency" },
+    title: "Test",
     type: "indicator",
     mode: "gauge+number",
     gauge: {
@@ -105,9 +105,9 @@ function createChart(data, sample) {
 ];
 
 var gaugelayout = { 
+  title: "Belly Button Washing Frequency<br> Scrubs per Week",
   width: 500, 
-  height: 350,
-  margin: { t: 0, b: 0 } };
+  height: 500 };
 Plotly.newPlot(GAUGE, gaugedata, gaugelayout);
 }
 
